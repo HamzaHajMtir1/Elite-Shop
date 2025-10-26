@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-2">Shopping Cart</h1>
+            <p class="text-purple-100">Review your items before checkout</p>
+        </div>
+    </div>
+</section>
+
+<!-- Cart Content -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        
+        {% if cart_items %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Cart Items -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                    <!-- Header -->
+                    <div class="bg-gray-50 px-6 py-4 border-b">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            Cart Items ({{ cart_items|length }})
+                        </h2>
+                    </div>
+                    
+                    <!-- Items List -->
+                    <div class="divide-y">
+                        {% for item in cart_items %}
+                        <div class="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                            
+                            <!-- Product Image -->
+                            <a href="{% url 'product_detail' item.product.id item.product.slug %}" class="flex-shrink-0">
+                                <div class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover hover-scale smooth-transition">
+                                    {% else %}
+                                    <div class="flex items-center justify-center h-full">
+                                        <i class="fas fa-image text-gray-300 text-2xl"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            
+                            <!-- Product Info -->
+                            <div class="flex-1">
+                                <a href="{% url 'product_detail' item.product.id item.product.slug %}" class="text-lg font-semibold text-gray-800 hover:text-purple-600 transition mb-1 block">
+                                    {{ item.product.name }}
+                                </a>
+                                {% if item.product.category %}
+                                <p class="text-sm text-gray-600">{{ item.product.category.name }}</p>
+                                {% endif %}
+                                <p class="text-xl font-bold text-purple-600 mt-2">{{ item.product.price }} TND</p>
+                            </div>
+                            
+                            <!-- Quantity Controls -->
+                            <div class="flex items-center gap-4">
+                                <form method="POST" action="{% url 'update_cart' item.id %}" class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="updateQuantity(this, -1)" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 transition">
+                                        <i class="fas fa-minus text-sm"></i>
+                                    </button>
+                                    <input 
+                                        type="number" 
+                                        name="quantity" 
+                                        value="{{ item.quantity }}" 
+                                        min="1" 
+                                        max="{{ item.product.stock }}"
+                                        class="w-16 text-center border-0 focus:outline-none font-semibold"
+                                        onchange="this.form.submit()"
+                                    >
+                                    <button type="button" onclick="updateQuantity(this, 1)" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 transition">
+                                        <i class="fas fa-plus text-sm"></i>
+                                    </button>
+                                </form>
+                                
+                                <!-- Remove Button -->
+                                <a href="{% url 'remove_from_cart' item.id %}" class="text-red-600 hover:text-red-700 transition p-2" title="Remove item">
+                                    <i class="fas fa-trash text-lg"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Item Total -->
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 mb-1">Subtotal</p>
+                                <p class="text-xl font-bold text-gray-800">{{ item.total_price }} TND</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Continue Shopping -->
+                <div class="mt-6">
+                    <a href="{% url 'products' %}" class="text-purple-600 hover:text-purple-700 font-semibold flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden sticky top-24">
+                    <!-- Header -->
+                    <div class="bg-gray-50 px-6 py-4 border-b">
+                        <h2 class="text-xl font-bold text-gray-800">Order Summary</h2>
+                    </div>
+                    
+                    <!-- Summary Details -->
+                    <div class="p-6 space-y-4">
+                        <!-- Subtotal -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span class="font-semibold text-gray-800">{{ total }} TND</span>
+                        </div>
+                        
+                        <!-- Shipping -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Shipping</span>
+                            {% if total >= 100 %}
+                            <span class="font-semibold text-green-600">FREE</span>
+                            {% else %}
+                            <span class="font-semibold text-gray-800">7.00 TND</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Free Shipping Progress -->
+                        {% if total < 100 %}
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <p class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-truck text-purple-600 mr-1"></i>
+                                Add <span class="font-bold text-purple-600">{{ 100|floatformat:2|add:total|floatformat:2 }} TND</span> more for FREE shipping!
+                            </p>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                {% with progress_width=total|floatformat:0 %}
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: {{ progress_width }}%"></div>
+                                {% endwith %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Divider -->
+                        <hr class="my-4">
+                        
+                        <!-- Total -->
+                        <div class="flex justify-between items-center text-lg">
+                            <span class="font-bold text-gray-800">Total</span>
+                            <span class="font-bold text-purple-600 text-2xl">
+                                {% if total >= 100 %}
+                                {{ total }} TND
+                                {% else %}
+                                {{ total|add:7 }} TND
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- Checkout Button -->
+                        <a href="{% url 'checkout' %}" class="block w-full bg-purple-600 text-white text-center py-4 rounded-lg hover:bg-purple-700 transition font-semibold text-lg mt-6">
+                            <i class="fas fa-lock mr-2"></i>
+                            Proceed to Checkout
+                        </a>
+                        
+                        <!-- Payment Methods -->
+                        <div class="text-center pt-4 border-t">
+                            <p class="text-xs text-gray-600 mb-3">We accept</p>
+                            <div class="flex justify-center items-center gap-3">
+                                <i class="fab fa-cc-visa text-3xl text-blue-600"></i>
+                                <i class="fab fa-cc-mastercard text-3xl text-orange-600"></i>
+                                <i class="fab fa-cc-stripe text-3xl text-purple-600"></i>
+                                <i class="fab fa-cc-paypal text-3xl text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        
+        <!-- Empty Cart -->
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-md p-12 text-center">
+                <div class="w-32 h-32 mx-auto mb-6 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-purple-600 text-6xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h2>
+                <p class="text-gray-600 mb-8">Looks like you haven't added any items to your cart yet.</p>
+                <a href="{% url 'products' %}" class="inline-block bg-purple-600 text-white px-8 py-4 rounded-full hover:bg-purple-700 transition font-semibold">
+                    <i class="fas fa-shopping-bag mr-2"></i>
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+        
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateQuantity(button, change) {
+        const form = button.closest('form');
+        const input = form.querySelector('input[name="quantity"]');
+        const currentValue = parseInt(input.value);
+        const newValue = currentValue + change;
+        const max = parseInt(input.max);
+        
+        if (newValue >= 1 && newValue <= max) {
+            input.value = newValue;
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

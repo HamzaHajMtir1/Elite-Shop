@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
+            <p class="text-xl text-purple-100">We'd love to hear from you</p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Contact Form -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+                    
+                    <form method="POST" action="{% url 'contact' %}" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Full Name *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    required
+                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                    placeholder="John Doe"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Email Address *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input 
+                                    type="email" 
+                                    name="email" 
+                                    required
+                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                    placeholder="john@example.com"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Phone Number
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                                <input 
+                                    type="tel" 
+                                    name="phone"
+                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                    placeholder="+216 12 345 678"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Subject -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Subject *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-tag"></i>
+                                </span>
+                                <select 
+                                    name="subject" 
+                                    required
+                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition appearance-none"
+                                >
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="order">Order Issue</option>
+                                    <option value="product">Product Question</option>
+                                    <option value="shipping">Shipping & Delivery</option>
+                                    <option value="return">Returns & Refunds</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Message -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Message *
+                            </label>
+                            <textarea 
+                                name="message" 
+                                rows="5"
+                                required
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition resize-none"
+                                placeholder="Tell us how we can help you..."
+                            ></textarea>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            class="w-full bg-purple-600 text-white py-4 rounded-lg hover:bg-purple-700 transition font-semibold text-lg flex items-center justify-center"
+                        >
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="space-y-8">
+                    
+                    <!-- Contact Info Cards -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Contact Information</h2>
+                        
+                        <div class="space-y-6">
+                            <!-- Address -->
+                            <div class="flex items-start space-x-4">
+                                <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-1">Address</h3>
+                                    <p class="text-gray-600">123 Commerce Street<br>Tunis, Tunisia 1000</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="flex items-start space-x-4">
+                                <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-phone text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-1">Phone</h3>
+                                    <p class="text-gray-600">+216 12 345 678<br>+216 98 765 432</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="flex items-start space-x-4">
+                                <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-1">Email</h3>
+                                    <p class="text-gray-600">contact@eliteshop.tn<br>support@eliteshop.tn</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Working Hours -->
+                            <div class="flex items-start space-x-4">
+                                <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-1">Working Hours</h3>
+                                    <p class="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Follow Us</h2>
+                        <p class="text-gray-600 mb-6">Stay connected on social media for updates, offers, and more!</p>
+                        
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center hover:bg-purple-700 transition">
+                                <i class="fab fa-facebook-f text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center hover:bg-purple-700 transition">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center hover:bg-purple-700 transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center hover:bg-purple-700 transition">
+                                <i class="fab fa-linkedin-in text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-purple-600 text-white rounded-lg flex items-center justify-center hover:bg-purple-700 transition">
+                                <i class="fab fa-youtube text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Links -->
+                    <div class="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
+                        <h2 class="text-2xl font-bold mb-4">Need Quick Help?</h2>
+                        <p class="text-purple-100 mb-6">Check out our frequently asked questions or browse our help center.</p>
+                        <div class="space-y-3">
+                            <a href="#" class="block bg-white/10 hover:bg-white/20 transition rounded-lg px-4 py-3 flex items-center justify-between">
+                                <span>FAQs</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="#" class="block bg-white/10 hover:bg-white/20 transition rounded-lg px-4 py-3 flex items-center justify-between">
+                                <span>Help Center</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="#" class="block bg-white/10 hover:bg-white/20 transition rounded-lg px-4 py-3 flex items-center justify-between">
+                                <span>Shipping Info</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- CTA Section -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl shadow-xl p-12 text-center text-white">
+            <i class="fas fa-comments text-6xl mb-6 opacity-80"></i>
+            <h2 class="text-4xl font-bold mb-4">Have Questions?</h2>
+            <p class="text-xl text-purple-100 mb-8">Our customer support team is here to help you with any inquiries.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tel:+21612345678" class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition inline-flex items-center justify-center">
+                    <i class="fas fa-phone mr-2"></i>
+                    Call Us Now
+                </a>
+                <a href="mailto:contact@eliteshop.tn" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition inline-flex items-center justify-center">
+                    <i class="fas fa-envelope mr-2"></i>
+                    Email Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

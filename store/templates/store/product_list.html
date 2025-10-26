@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Products - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
+            <p class="text-xl text-purple-100">Discover amazing products at great prices</p>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        
+        <!-- Filters and Sort -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+                
+                <!-- Search and Filters -->
+                <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                    <form method="GET" class="flex gap-2">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            value="{{ request.GET.search }}"
+                            placeholder="Search products..." 
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 w-full sm:w-64"
+                        >
+                        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    
+                    <!-- Category Filter -->
+                    <select onchange="window.location.href='?category='+this.value" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Sort Options -->
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-600 font-medium">Sort by:</span>
+                    <select onchange="window.location.href='?sort='+this.value" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+                        <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Count -->
+        <div class="mb-6">
+            <p class="text-gray-600">
+                Showing <span class="font-semibold text-gray-800">{{ products|length }}</span> products
+            </p>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for product in products %}
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden hover-shadow smooth-transition group">
+                <a href="{% url 'product_detail' product.id product.slug %}" class="block relative">
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-100 h-72 overflow-hidden">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 smooth-transition">
+                        {% else %}
+                        <div class="flex items-center justify-center h-full">
+                            <i class="fas fa-image text-gray-300 text-6xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Badges -->
+                    <div class="absolute top-4 left-4 flex flex-col gap-2">
+                        {% if product.get_discount_percentage > 0 %}
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            -{{ product.get_discount_percentage }}%
+                        </span>
+                        {% endif %}
+                        
+                        {% if product.featured %}
+                        <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            FEATURED
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    {% if product.stock == 0 %}
+                    <div class="absolute top-4 right-4">
+                        <span class="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            OUT OF STOCK
+                        </span>
+                    </div>
+                    {% elif product.stock < 5 %}
+                    <div class="absolute top-4 right-4">
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            ONLY {{ product.stock }} LEFT
+                        </span>
+                    </div>
+                    {% endif %}
+                </a>
+                
+                <div class="p-6">
+                    <!-- Category -->
+                    {% if product.category %}
+                    <p class="text-xs text-purple-600 font-semibold uppercase mb-2">
+                        {{ product.category.name }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Product Name -->
+                    <a href="{% url 'product_detail' product.id product.slug %}">
+                        <h3 class="font-semibold text-gray-800 mb-3 hover:text-purple-600 transition line-clamp-2 h-12">
+                            {{ product.name }}
+                        </h3>
+                    </a>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center mb-3">
+                        <div class="flex items-center text-yellow-400 text-sm">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm ml-2">(4.5)</span>
+                    </div>
+                    
+                    <!-- Price -->
+                    <div class="flex items-center mb-4">
+                        {% if product.old_price %}
+                        <span class="text-gray-400 line-through mr-2 text-sm">{{ product.old_price }} TND</span>
+                        {% endif %}
+                        <span class="text-2xl font-bold text-purple-600">{{ product.price }} TND</span>
+                    </div>
+                    
+                    <!-- Add to Cart Button -->
+                    {% if product.stock > 0 %}
+                    <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-semibold flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add to Cart
+                        </button>
+                    </form>
+                    {% else %}
+                    <button disabled class="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold cursor-not-allowed">
+                        Out of Stock
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-16">
+                <i class="fas fa-box-open text-gray-300 text-8xl mb-6"></i>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">No Products Found</h3>
+                <p class="text-gray-600 mb-6">We couldn't find any products matching your criteria.</p>
+                <a href="{% url 'products' %}" class="bg-purple-600 text-white px-8 py-3 rounded-full hover:bg-purple-700 transition inline-block">
+                    View All Products
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

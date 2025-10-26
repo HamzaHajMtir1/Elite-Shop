@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Elite Shop - Your Premium E-commerce Store{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        .hover-shadow:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Top Bar -->
+    <div class="bg-gray-900 text-white text-sm py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span><i class="fas fa-phone mr-2"></i>+216 12 345 678</span>
+                <span><i class="fas fa-envelope mr-2"></i>contact@eliteshop.tn</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span><i class="fas fa-truck mr-2"></i>Free Shipping on Orders Over 100 TND</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                
+                <!-- Logo -->
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gem text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        Elite Shop
+                    </span>
+                </a>
+                
+                <!-- Search Bar -->
+                <div class="hidden md:block flex-1 max-w-2xl mx-8">
+                    <form method="GET" action="{% url 'products' %}" class="relative">
+                        <input 
+                            type="text" 
+                            name="search"
+                            placeholder="Search for products..." 
+                            class="w-full px-6 py-3 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition"
+                        >
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-6">
+                    
+                    <!-- Cart -->
+                    <a href="{% url 'cart' %}" class="relative smooth-transition hover:text-purple-600">
+                        <i class="fas fa-shopping-cart text-2xl"></i>
+                        {% if cart_count > 0 %}
+                        <span class="cart-badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    <!-- User Account -->
+                    {% if user.is_authenticated %}
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 smooth-transition hover:text-purple-600">
+                            <i class="fas fa-user-circle text-2xl"></i>
+                            <span class="hidden lg:block">{{ user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                            <a href="{% url 'profile' %}" class="block px-4 py-3 hover:bg-gray-100 transition">
+                                <i class="fas fa-user mr-2"></i>My Profile
+                            </a>
+                            <a href="{% url 'order_history' %}" class="block px-4 py-3 hover:bg-gray-100 transition">
+                                <i class="fas fa-box mr-2"></i>My Orders
+                            </a>
+                            <hr>
+                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-gray-100 text-red-600 transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="flex items-center space-x-2 smooth-transition hover:text-purple-600">
+                        <i class="fas fa-sign-in-alt text-xl"></i>
+                        <span class="hidden lg:block">Login</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition">
+                        Sign Up
+                    </a>
+                    {% endif %}
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button class="md:hidden text-2xl" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Main Menu -->
+            <div class="hidden md:flex items-center justify-center space-x-8 py-3 border-t">
+                <a href="{% url 'home' %}" class="smooth-transition hover:text-purple-600 font-medium">Home</a>
+                <a href="{% url 'products' %}" class="smooth-transition hover:text-purple-600 font-medium">Products</a>
+                <a href="{% url 'products' %}?category=electronics" class="smooth-transition hover:text-purple-600 font-medium">Electronics</a>
+                <a href="{% url 'products' %}?category=fashion" class="smooth-transition hover:text-purple-600 font-medium">Fashion</a>
+                <a href="{% url 'products' %}?category=home-living" class="smooth-transition hover:text-purple-600 font-medium">Home & Living</a>
+                <a href="{% url 'contact' %}" class="smooth-transition hover:text-purple-600 font-medium">Contact</a>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-3">
+                <form method="GET" action="{% url 'products' %}" class="mb-4">
+                    <input 
+                        type="text" 
+                        name="search"
+                        placeholder="Search products..." 
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-purple-500 focus:outline-none"
+                    >
+                </form>
+                <a href="{% url 'home' %}" class="block py-2 hover:text-purple-600">Home</a>
+                <a href="{% url 'products' %}" class="block py-2 hover:text-purple-600">Products</a>
+                <a href="{% url 'products' %}?category=electronics" class="block py-2 hover:text-purple-600">Electronics</a>
+                <a href="{% url 'products' %}?category=fashion" class="block py-2 hover:text-purple-600">Fashion</a>
+                <a href="{% url 'products' %}?category=home-living" class="block py-2 hover:text-purple-600">Home & Living</a>
+                <a href="{% url 'contact' %}" class="block py-2 hover:text-purple-600">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-100 border border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-400 text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+            <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                <!-- About -->
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Elite Shop</h3>
+                    <p class="text-sm mb-4">Your premium destination for quality products. We offer the best selection of electronics, fashion, and home goods.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'home' %}" class="hover:text-purple-400 transition">Home</a></li>
+                        <li><a href="{% url 'products' %}" class="hover:text-purple-400 transition">Products</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Customer Service -->
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-purple-400 transition">Shipping Information</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">Returns & Exchanges</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">FAQ</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Newsletter</h3>
+                    <p class="text-sm mb-4">Subscribe to get special offers and updates.</p>
+                    <form class="flex">
+                        <input 
+                            type="email" 
+                            placeholder="Your email" 
+                            class="flex-1 px-4 py-2 rounded-l-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-purple-500"
+                        >
+                        <button type="submit" class="bg-purple-600 px-4 py-2 rounded-r-lg hover:bg-purple-700 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2025 Elite Shop. All rights reserved. Designed with <i class="fas fa-heart text-red-500"></i> by Elite Team</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('[role="alert"]');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

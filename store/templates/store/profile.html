@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center gap-4">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-purple-600 text-3xl"></i>
+            </div>
+            <div>
+                <h1 class="text-4xl font-bold mb-2">My Profile</h1>
+                <p class="text-purple-100">Manage your account information</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Profile Content -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Profile Information -->
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
+                <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">Profile Information</h2>
+                    <button class="text-purple-600 hover:text-purple-700 font-semibold">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </button>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Full Name</h3>
+                            <p class="text-lg text-gray-800">{{ user.get_full_name|default:user.username }}</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Username</h3>
+                            <p class="text-lg text-gray-800">{{ user.username }}</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Email</h3>
+                            <p class="text-lg text-gray-800">{{ user.email }}</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Member Since</h3>
+                            <p class="text-lg text-gray-800">{{ user.date_joined|date:"F Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-box text-purple-600 text-2xl"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-800 mb-2">{{ order_count }}</p>
+                    <p class="text-gray-600">Total Orders</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-800 mb-2">{{ completed_orders }}</p>
+                    <p class="text-gray-600">Completed</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-800 mb-2">{{ pending_orders }}</p>
+                    <p class="text-gray-600">Pending</p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="{% url 'order_history' %}" class="bg-white rounded-xl shadow-md p-6 hover-shadow smooth-transition flex items-center gap-4">
+                    <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-history text-purple-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-1">Order History</h3>
+                        <p class="text-sm text-gray-600">View all your past orders</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                </a>
+                
+                <a href="#" class="bg-white rounded-xl shadow-md p-6 hover-shadow smooth-transition flex items-center gap-4">
+                    <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-lock text-purple-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-1">Change Password</h3>
+                        <p class="text-sm text-gray-600">Update your password</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

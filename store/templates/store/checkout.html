@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-2">Checkout</h1>
+            <p class="text-purple-100">Complete your order securely</p>
+        </div>
+    </div>
+</section>
+
+<!-- Checkout Steps -->
+<section class="py-6 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                    <span class="ml-3 font-semibold text-purple-600">Shipping</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold">2</div>
+                    <span class="ml-3 text-gray-600">Payment</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold">3</div>
+                    <span class="ml-3 text-gray-600">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Checkout Form -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <form method="POST" action="{% url 'process_checkout' %}" id="checkout-form">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Left Column - Forms -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Shipping Information -->
+                        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b">
+                                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-shipping-fast text-purple-600 mr-3"></i>
+                                    Shipping Information
+                                </h2>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Full Name *
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="full_name" 
+                                            required
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                            placeholder="John Doe"
+                                        >
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Phone Number *
+                                        </label>
+                                        <input 
+                                            type="tel" 
+                                            name="phone" 
+                                            required
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                            placeholder="+216 12 345 678"
+                                        >
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Email Address *
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                        placeholder="john@example.com"
+                                        value="{% if user.is_authenticated %}{{ user.email }}{% endif %}"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Street Address *
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="address" 
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                        placeholder="123 Main Street, Apartment 4B"
+                                    >
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            City *
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="city" 
+                                            required
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                            placeholder="Tunis"
+                                        >
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Postal Code *
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="postal_code" 
+                                            required
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                            placeholder="1000"
+                                        >
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Country *
+                                        </label>
+                                        <select 
+                                            name="country" 
+                                            required
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+                                        >
+                                            <option value="Tunisia" selected>Tunisia</option>
+                                            <option value="Algeria">Algeria</option>
+                                            <option value="Morocco">Morocco</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Method -->
+                        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b">
+                                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-credit-card text-purple-600 mr-3"></i>
+                                    Payment Method
+                                </h2>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <!-- Stripe -->
+                                <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition">
+                                    <input type="radio" name="payment_method" value="stripe" class="w-5 h-5 text-purple-600" checked>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-semibold text-gray-800">Credit / Debit Card</span>
+                                            <div class="flex gap-2">
+                                                <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
+                                                <i class="fab fa-cc-mastercard text-2xl text-orange-600"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-1">Pay securely with Stripe</p>
+                                    </div>
+                                </label>
+                                
+                                <!-- Cash on Delivery -->
+                                <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition">
+                                    <input type="radio" name="payment_method" value="cod" class="w-5 h-5 text-purple-600">
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-semibold text-gray-800">Cash on Delivery</span>
+                                            <i class="fas fa-money-bill-wave text-2xl text-green-600"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mt-1">Pay when you receive your order</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Order Summary -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-2xl shadow-md overflow-hidden sticky top-24">
+                            <div class="bg-gray-50 px-6 py-4 border-b">
+                                <h2 class="text-xl font-bold text-gray-800">Order Summary</h2>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <!-- Cart Items -->
+                                <div class="space-y-3 max-h-64 overflow-y-auto">
+                                    {% for item in cart_items %}
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                            <div class="flex items-center justify-center h-full">
+                                                <i class="fas fa-image text-gray-300"></i>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 truncate">{{ item.product.name }}</p>
+                                            <p class="text-xs text-gray-600">Qty: {{ item.quantity }}</p>
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-800">{{ item.total_price }} TND</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <hr>
+                                
+                                <!-- Pricing -->
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Subtotal</span>
+                                        <span class="font-semibold">{{ total }} TND</span>
+                                    </div>
+                                    
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Shipping</span>
+                                        {% if total >= 100 %}
+                                        <span class="font-semibold text-green-600">FREE</span>
+                                        {% else %}
+                                        <span class="font-semibold">7.00 TND</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="flex justify-between text-lg font-bold">
+                                        <span>Total</span>
+                                        <span class="text-purple-600 text-2xl">
+                                            {% if total >= 100 %}
+                                            {{ total }} TND
+                                            {% else %}
+                                            {{ total|add:7 }} TND
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Place Order Button -->
+                                <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-lg hover:bg-purple-700 transition font-semibold text-lg mt-6">
+                                    <i class="fas fa-lock mr-2"></i>
+                                    Place Order
+                                </button>
+                                
+                                <p class="text-xs text-gray-600 text-center mt-4">
+                                    <i class="fas fa-shield-alt mr-1"></i>
+                                    Your payment information is secure
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

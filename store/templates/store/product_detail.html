@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Elite Shop{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<section class="bg-gray-100 py-4">
+    <div class="container mx-auto px-4">
+        <nav class="text-sm">
+            <ol class="flex items-center space-x-2 text-gray-600">
+                <li><a href="{% url 'home' %}" class="hover:text-purple-600">Home</a></li>
+                <li><i class="fas fa-chevron-right text-xs"></i></li>
+                <li><a href="{% url 'products' %}" class="hover:text-purple-600">Products</a></li>
+                {% if product.category %}
+                <li><i class="fas fa-chevron-right text-xs"></i></li>
+                <li><a href="{% url 'products' %}?category={{ product.category.slug }}" class="hover:text-purple-600">{{ product.category.name }}</a></li>
+                {% endif %}
+                <li><i class="fas fa-chevron-right text-xs"></i></li>
+                <li class="text-gray-800 font-medium">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Product Details -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Product Image -->
+            <div>
+                <div class="bg-gray-100 rounded-2xl overflow-hidden mb-4">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-auto">
+                    {% else %}
+                    <div class="flex items-center justify-center h-96">
+                        <i class="fas fa-image text-gray-300 text-8xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Thumbnail Gallery (placeholder for future multiple images) -->
+                <div class="grid grid-cols-4 gap-4">
+                    {% if product.image %}
+                    <div class="bg-gray-100 rounded-lg overflow-hidden border-2 border-purple-600 cursor-pointer">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-24 object-cover">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div>
+                <!-- Category -->
+                {% if product.category %}
+                <p class="text-purple-600 font-semibold uppercase text-sm mb-2">
+                    {{ product.category.name }}
+                </p>
+                {% endif %}
+                
+                <!-- Product Name -->
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">{{ product.name }}</h1>
+                
+                <!-- Rating -->
+                <div class="flex items-center mb-6">
+                    <div class="flex items-center text-yellow-400 text-lg">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="text-gray-600 ml-3">(4.5) - 128 Reviews</span>
+                </div>
+                
+                <!-- Price -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-4 mb-2">
+                        <span class="text-4xl font-bold text-purple-600">{{ product.price }} TND</span>
+                        {% if product.old_price %}
+                        <span class="text-2xl text-gray-400 line-through">{{ product.old_price }} TND</span>
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            Save {{ product.get_discount_percentage }}%
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-sm text-gray-600">Tax included. Shipping calculated at checkout.</p>
+                </div>
+                
+                <!-- Stock Status -->
+                <div class="mb-6">
+                    {% if product.stock > 0 %}
+                    <div class="flex items-center text-green-600 mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span class="font-semibold">In Stock ({{ product.stock }} available)</span>
+                    </div>
+                    {% if product.stock < 5 %}
+                    <p class="text-orange-600 text-sm">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        Only {{ product.stock }} left - Order soon!
+                    </p>
+                    {% endif %}
+                    {% else %}
+                    <div class="flex items-center text-red-600">
+                        <i class="fas fa-times-circle mr-2"></i>
+                        <span class="font-semibold">Out of Stock</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Description -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Description</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ product.description|default:"No description available for this product." }}</p>
+                </div>
+                
+                <!-- Quantity and Add to Cart -->
+                {% if product.stock > 0 %}
+                <form method="POST" action="{% url 'add_to_cart' product.id %}" class="mb-8">
+                    {% csrf_token %}
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden w-full sm:w-32">
+                            <button type="button" onclick="decrementQuantity()" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input 
+                                type="number" 
+                                name="quantity" 
+                                id="quantity" 
+                                value="1" 
+                                min="1" 
+                                max="{{ product.stock }}"
+                                class="w-full text-center border-0 focus:outline-none text-lg font-semibold"
+                            >
+                            <button type="button" onclick="incrementQuantity()" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <button type="submit" class="flex-1 bg-purple-600 text-white py-4 px-8 rounded-lg hover:bg-purple-700 transition font-semibold text-lg">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <button disabled class="w-full bg-gray-300 text-gray-500 py-4 px-8 rounded-lg font-semibold text-lg cursor-not-allowed mb-8">
+                    Out of Stock
+                </button>
+                {% endif %}
+                
+                <!-- Additional Info -->
+                <div class="border-t pt-6 space-y-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-shipping-fast text-purple-600 text-xl mr-4"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800">Free Shipping</p>
+                            <p class="text-sm">On orders over 100 TND</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-undo text-purple-600 text-xl mr-4"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800">Easy Returns</p>
+                            <p class="text-sm">30-day return policy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-shield-alt text-purple-600 text-xl mr-4"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800">Secure Payment</p>
+                            <p class="text-sm">100% protected checkout</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8">You May Also Like</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for related_product in related_products %}
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden hover-shadow smooth-transition">
+                <a href="{% url 'product_detail' related_product.id related_product.slug %}" class="block relative">
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-100 h-64">
+                        {% if related_product.image %}
+                        <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}" class="w-full h-full object-cover hover-scale smooth-transition">
+                        {% else %}
+                        <div class="flex items-center justify-center h-full">
+                            <i class="fas fa-image text-gray-300 text-6xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                
+                <div class="p-6">
+                    <a href="{% url 'product_detail' related_product.id related_product.slug %}">
+                        <h3 class="font-semibold text-gray-800 mb-2 hover:text-purple-600 transition">
+                            {{ related_product.name }}
+                        </h3>
+                    </a>
+                    <div class="text-xl font-bold text-purple-600">{{ related_product.price }} TND</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function incrementQuantity() {
+        const input = document.getElementById('quantity');
+        const max = parseInt(input.max);
+        const current = parseInt(input.value);
+        if (current < max) {
+            input.value = current + 1;
+        }
+    }
+    
+    function decrementQuantity() {
+        const input = document.getElementById('quantity');
+        const current = parseInt(input.value);
+        if (current > 1) {
+            input.value = current - 1;
+        }
+    }
+</script>
+{% endblock %}
